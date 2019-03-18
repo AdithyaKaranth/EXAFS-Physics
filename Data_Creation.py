@@ -21,11 +21,11 @@ import random
 mylarch = Interpreter()
 
 #range for rdm num generator
-rangeA = (np.linspace(5,150,146) * 0.01).tolist()
-rangeB = (np.linspace(-500,500,1001) * 0.01).tolist()
-rangeC = (np.linspace(-20,20,41) * 0.01).tolist()
-rangeD = (np.linspace(1,35,35) * 0.001).tolist()
-rangeA.append(0)
+S02 = (np.linspace(5,150,146) * 0.01).tolist()
+E0 = (np.linspace(-500,500,1001) * 0.01).tolist()
+SIGMA2 = (np.linspace(1,15,16) * 0.001).tolist()
+DELTAR = (np.linspace(-20,20,41) * 0.01).tolist()
+
 #len(rangeA)
 #print(len(rangeA))
 #print(len(rangeB))
@@ -34,19 +34,19 @@ rangeA.append(0)
 #rangeB.append(0)
 #rangeC.append(0)
 #rangeD.append(0)
-print(min(rangeA)," + ",max(rangeA))
-print(min(rangeB)," + ",max(rangeB))
-print(min(rangeC)," + ",max(rangeC))
-print(min(rangeD)," + ",max(rangeD))
+print(min(S02)," + ",max(S02))
+print(min(E0)," + ",max(E0))
+print(min(SIGMA2)," + ",max(SIGMA2))
+print(min(DELTAR)," + ",max(DELTAR))
 #front = '/Users/42413/Documents/GitHub/EXAFS/Cu Data/path Data/feff'
 front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
 end = '.dat'
 
 random.seed(19)
-def generate_y():
-    x_total = [0]*(401)
-    y = []
+def generate_x():
+    x_total = [0]*(281)
     #print(y_total)
+    path_sel = np.round(np.random.rand(10)).astype(int)
     for i in range(1,11):
         if i < 10:
             filename = front+'000'+str(i)+end
@@ -54,50 +54,56 @@ def generate_y():
             filename = front+'00'+str(i)+end
         else:
             filename = front+'0'+str(i)+end
-        a = random.choice(rangeA)
-        b = random.choice(rangeB)
-        c = random.choice(rangeC)
-        d = random.choice(rangeD)
+        
+        if path_sel[i-1] == 1:
+            s02 = random.choice(S02)
+            e0 = random.choice(E0)
+            sigma2 = random.choice(SIGMA2)
+            deltaR = random.choice(DELTAR)
+            
+        else:
+            s02 = e0 = sigma2 = deltaR = 0
         
         #print(filename)
         #print(a,b,c,d)
-        path=feffdat.feffpath(filename, s02= str(a), e0= str(b), sigma2= str(d), deltar= str(c), _larch=mylarch)
-        y.extend([a,b,d,c])
+        path=feffdat.feffpath(filename, s02= str(s02), e0= str(e0), sigma2= str(sigma2), deltar= str(deltaR), _larch=mylarch)
         #print(y)
         feffdat._path2chi(path, _larch=mylarch)
         x = path.chi
+        x = x[60:341]
         #print("-------------------------------------------------------")
         #print(y)
         #print("------------------------------------------------------")
         for k in range(len(x)):
            x_total[k] += x[k]
-    return(x_total, y)
-x,y = generate_y()
+    return x_total
 
 #print(len(y))
 #print(min(x), max(x))
 
 x = []
-y = []
 
 for i in range(0,5000):
-    X,Y = generate_y()
+    X = generate_x()
     x.append(X)
-    y.append(Y)
+
 #a = random.choice(rangeA)
 #b = random.choice(rangeB)
 #c = random.choice(rangeC)
 #d = random.choice(rangeD) 
-"""
-## Check
+    
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = np.asarray(k_value)
-chi = y
+k_value = k_value[60:341]
+chi = np.asarray(x[2345])
 import matplotlib.pyplot as plt
+
+from IPython import get_ipython
+get_ipython().run_line_magic('matplotlib', 'inline')
+
 plt.plot(k_value,chi*k_value**2)
 
 plt.show()
-"""
 
 """
 path=feffdat.feffpath('/Users/user/EXAFS-master/Cu Data/path Data/feff0001.dat', s02= str(rangeA[20]), e0= str(rangeB[20]), sigma2= rangeD[20], deltar= rangeC[20], _larch=mylarch)
@@ -105,15 +111,10 @@ feffdat._path2chi(path, _larch=mylarch)
 y = path.chi
 #print(y)
 """
-
 import numpy as np
 x = np.asarray(x)
-y = np.asarray(y)
 
 import pickle
 
 with open('input.pickle', 'wb') as f:
     pickle.dump(x, f,)
-
-with open('output.pickle', 'wb') as f:
-    pickle.dump(y,f)
