@@ -95,7 +95,7 @@ for i in range(0,5000):
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = np.asarray(k_value)
 k_value = k_value[60:341]
-chi = np.asarray(x[2345])
+chi = np.asarray(x[4996])
 import matplotlib.pyplot as plt
 
 from IPython import get_ipython

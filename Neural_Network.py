@@ -32,12 +32,12 @@ with open('input.pickle', 'rb') as f:
 def build_model():
     model = models.Sequential()
     model.add(layers.Dense(200,input_shape = (281,),activation="relu"))
-    model.add(BatchNormalization())
-    model.add(layers.Dense(40,name ="path_layer",activation= Activation(path_activation)))
+    #model.add(BatchNormalization())
+    model.add(layers.Dense(40,name ="path_layer",activation="sigmoid"))
     #model.add(Activation(path_activation))
     
     model.add(layers.Dense(200,activation = "relu"))
-    model.add(BatchNormalization())
+    #model.add(BatchNormalization())
     model.add(layers.Dense(281,activation ="sigmoid"))
     
     model.compile(optimizer=optimizers.Adam(lr = 0.001),loss= losses.mean_squared_error ,metrics =[metrics.mse])
