@@ -73,7 +73,8 @@ plt.show()
 
 save_model(model)"""
 
-
+from larch import Interpreter
+mylarch = Interpreter()
 
 
 import numpy as np
@@ -96,7 +97,7 @@ from larch import Interpreter
 
 predict = model.predict(chi_y)
 
-front = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff'
+front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
 end = '.dat'
 
 for i in range(1,11):

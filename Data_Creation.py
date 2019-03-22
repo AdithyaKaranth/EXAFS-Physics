@@ -39,7 +39,7 @@ print(min(E0)," + ",max(E0))
 print(min(SIGMA2)," + ",max(SIGMA2))
 print(min(DELTAR)," + ",max(DELTAR))
 #front = '/Users/42413/Documents/GitHub/EXAFS/Cu Data/path Data/feff'
-front = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff'
+front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
 end = '.dat'
 
 random.seed(19)
