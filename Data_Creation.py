@@ -21,7 +21,7 @@ import random
 mylarch = Interpreter()
 
 #range for rdm num generator
-S02 = (np.linspace(5,150,146) * 0.01).tolist()
+S02 = (np.linspace(5,15,146) * 0.01).tolist()
 E0 = (np.linspace(-500,500,1001) * 0.01).tolist()
 SIGMA2 = (np.linspace(1,15,16) * 0.001).tolist()
 DELTAR = (np.linspace(-20,20,41) * 0.01).tolist()
