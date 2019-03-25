@@ -81,12 +81,13 @@ import numpy as np
 
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = k_value[60:341]
-chi = x[0].tolist()
+chi = x[89].tolist()
 
 #chi.extend(chi_values) 
 chi_y = np.asmatrix(chi)
 k_value = np.asarray(k_value)
-chi = np.asarray(chi)
+
+actual_chi = np.asarray(chi)
 
 chi_y = np.asmatrix(chi)
 
@@ -102,7 +103,7 @@ end = '.dat'
 
 for i in range(1,11):
     #print(i)
-    y_chi = [0]*281
+    predicted_chi = [0]*281
     if i < 10:
         filename = front+'000'+str(i)+end
     elif i< 100:
@@ -113,10 +114,10 @@ for i in range(1,11):
     path=feffdat.feffpath(filename, s02=str(predict[0][4*(i-1)]) , e0= str(predict[0][4*(i-1) + 1]), sigma2= str(predict[0][4*(i-1) + 2]), deltar= str(predict[0][4*(i-1) +3]), _larch=mylarch)
     feffdat._path2chi(path, _larch=mylarch)
     
-    y = path.chi
-    y = y[60:341]
-    y_chi+= y
+    chi = path.chi
+    chi = chi[60:341]
+    predicted_chi += chi
 
-plt.plot(k_value,chi*k_value**2)
-plt.plot(k_value,y_chi*k_value**2)
+plt.plot(k_value,actual_chi*k_value**2)
+plt.plot(k_value,predicted_chi*k_value**2)
 plt.show()
