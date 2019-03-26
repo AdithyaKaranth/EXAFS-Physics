@@ -93,7 +93,12 @@ for i in range(0,5000):
 ## Check
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = np.asarray(k_value)
+<<<<<<< HEAD
 chi = y
+=======
+k_value = k_value[60:341]
+chi = np.asarray(x[4996])
+>>>>>>> d5a59f1c6600b79b50bd3ee5553a53c3a60964e1
 import matplotlib.pyplot as plt
 plt.plot(k_value,chi*k_value**2)
 plt.show()

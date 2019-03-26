@@ -11,11 +11,20 @@ from keras import optimizers
 from keras import losses
 from keras import regularizers
 from keras.layers import Activation
+from keras.models import Model
+import larch
+from larch_plugins.xafs import feffdat
+
 from keras.layers.normalization import BatchNormalization
 import larch
 from keras import regularizers
 from keras import backend as K
 from keras.utils.generic_utils import get_custom_objects
+
+def path_activation(x):
+    return (K.tanh(x) *5)
+
+get_custom_objects().update({'path_activation': Activation(path_activation)})
 
 import pickle
 
@@ -37,8 +46,8 @@ def build_model():
     model.add(layers.Dense(200,activation = "tanh",input_shape = (281,)))
     
     #model.add(BatchNormalization())
-    
-    model.add(layers.Dense(40,activation = Activation(path_activation)))
+    model.add(layers.Dense(40))
+    model.add(Activation(path_activation))
     model.compile(optimizer=optimizers.Adam(lr = 0.0001),loss= losses.mean_squared_error ,metrics =[metrics.mse])
     return model
 
