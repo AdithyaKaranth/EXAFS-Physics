@@ -11,11 +11,20 @@ from keras import optimizers
 from keras import losses
 from keras import regularizers
 from keras.layers import Activation
+from keras.models import Model
+import larch
+from larch_plugins.xafs import feffdat
+
 from keras.layers.normalization import BatchNormalization
 import larch
 from keras import regularizers
 from keras import backend as K
 from keras.utils.generic_utils import get_custom_objects
+
+def path_activation(x):
+    return (K.tanh(x) *5)
+
+get_custom_objects().update({'path_activation': Activation(path_activation)})
 
 import pickle
 
@@ -37,8 +46,13 @@ def build_model():
     model.add(layers.Dense(180,activation = "tanh",input_shape = (281,)))
     
     #model.add(BatchNormalization())
+<<<<<<< HEAD
     
     model.add(layers.Dense(4,activation = Activation(path_activation)))
+=======
+    model.add(layers.Dense(40))
+    model.add(Activation(path_activation))
+>>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
     model.compile(optimizer=optimizers.Adam(lr = 0.0001),loss= losses.mean_squared_error ,metrics =[metrics.mse])
     return model
 
@@ -73,19 +87,25 @@ plt.show()
 
 save_model(model)"""
 
-
+from larch import Interpreter
+mylarch = Interpreter()
 
 
 import numpy as np
 
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = k_value[60:341]
+<<<<<<< HEAD
 chi = x[10000].tolist()
+=======
+chi = x[89].tolist()
+>>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
 
 #chi.extend(chi_values) 
 chi_y = np.asmatrix(chi)
 k_value = np.asarray(k_value)
-chi = np.asarray(chi)
+
+actual_chi = np.asarray(chi)
 
 chi_y = np.asmatrix(chi)
 
@@ -95,13 +115,18 @@ from larch_plugins.xafs import feffdat
 from larch import Interpreter
 
 predict = model.predict(chi_y)
+<<<<<<< HEAD
 mylarch = Interpreter()
 front = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff'
+=======
+
+front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
+>>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
 end = '.dat'
 
 for i in range(1,2):
     #print(i)
-    y_chi = [0]*281
+    predicted_chi = [0]*281
     if i < 10:
         filename = front+'000'+str(i)+end
     elif i< 100:
@@ -112,10 +137,10 @@ for i in range(1,2):
     path=feffdat.feffpath(filename, s02=str(predict[0][4*(i-1)]) , e0= str(predict[0][4*(i-1) + 1]), sigma2= str(predict[0][4*(i-1) + 2]), deltar= str(predict[0][4*(i-1) +3]), _larch=mylarch)
     feffdat._path2chi(path, _larch=mylarch)
     
-    y = path.chi
-    y = y[60:341]
-    y_chi+= y
+    chi = path.chi
+    chi = chi[60:341]
+    predicted_chi += chi
 
-plt.plot(k_value,chi*k_value**2)
-plt.plot(k_value,y_chi*k_value**2)
+plt.plot(k_value,actual_chi*k_value**2)
+plt.plot(k_value,predicted_chi*k_value**2)
 plt.show()
