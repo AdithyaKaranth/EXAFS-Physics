@@ -34,11 +34,11 @@ get_custom_objects().update({'path_activation': Activation(path_activation)})
 
 def build_model():
     model = models.Sequential()
-    model.add(layers.Dense(200,activation = "tanh",input_shape = (281,)))
+    model.add(layers.Dense(180,activation = "tanh",input_shape = (281,)))
     
     #model.add(BatchNormalization())
     
-    model.add(layers.Dense(40,activation = Activation(path_activation)))
+    model.add(layers.Dense(4,activation = Activation(path_activation)))
     model.compile(optimizer=optimizers.Adam(lr = 0.0001),loss= losses.mean_squared_error ,metrics =[metrics.mse])
     return model
 
@@ -80,7 +80,7 @@ import numpy as np
 
 k_value = (np.linspace(0,2000,401)*0.01).tolist()
 k_value = k_value[60:341]
-chi = x[0].tolist()
+chi = x[10000].tolist()
 
 #chi.extend(chi_values) 
 chi_y = np.asmatrix(chi)
@@ -95,11 +95,11 @@ from larch_plugins.xafs import feffdat
 from larch import Interpreter
 
 predict = model.predict(chi_y)
-
+mylarch = Interpreter()
 front = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff'
 end = '.dat'
 
-for i in range(1,11):
+for i in range(1,2):
     #print(i)
     y_chi = [0]*281
     if i < 10:

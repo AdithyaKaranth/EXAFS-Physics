@@ -47,7 +47,7 @@ def generate_y():
     x_total = [0]*(281)
     y = []
     #print(y_total)
-    for i in range(1,11):
+    for i in range(1,2):
         if i < 10:
             filename = front+'000'+str(i)+end
         elif i< 100:
@@ -81,10 +81,20 @@ x,y = generate_y()
 x = []
 y = []
 
-for i in range(0,5000):
+for i in range(0,10000):
     X,Y = generate_y()
     x.append(X)
     y.append(Y)
+    
+y.append([0.9,1.1,0.004,0.03])
+
+filename = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff0001.dat'
+path=feffdat.feffpath(filename, s02= str(y[10000][0]), e0= str(y[10000][1]), sigma2= str(y[10000][2]), deltar= str(y[10000][3]), _larch=mylarch)
+#print(y)
+feffdat._path2chi(path, _larch=mylarch)
+X = path.chi
+X = X[60:341]
+x.append(X)
 #a = random.choice(rangeA)
 #b = random.choice(rangeB)
 #c = random.choice(rangeC)
