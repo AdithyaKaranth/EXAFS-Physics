@@ -11,20 +11,13 @@ from keras import optimizers
 from keras import losses
 from keras import regularizers
 from keras.layers import Activation
-from keras.models import Model
 import larch
 from larch_plugins.xafs import feffdat
+from sklearn.model_selection import train_test_split
 
 from keras.layers.normalization import BatchNormalization
-import larch
-from keras import regularizers
 from keras import backend as K
 from keras.utils.generic_utils import get_custom_objects
-
-def path_activation(x):
-    return (K.tanh(x) *5)
-
-get_custom_objects().update({'path_activation': Activation(path_activation)})
 
 import pickle
 
@@ -36,7 +29,7 @@ with open('output.pickle', 'rb') as f:
  
 
 def path_activation(x):
-    return (K.tanh(x) * 5)
+    return (K.tanh(x) * 2)
 
 get_custom_objects().update({'path_activation': Activation(path_activation)})
 
@@ -46,21 +39,16 @@ def build_model():
     model.add(layers.Dense(180,activation = "tanh",input_shape = (281,)))
     
     #model.add(BatchNormalization())
-<<<<<<< HEAD
     
-    model.add(layers.Dense(4,activation = Activation(path_activation)))
-=======
-    model.add(layers.Dense(40))
-    model.add(Activation(path_activation))
->>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
+    model.add(layers.Dense(40,activation = Activation(path_activation)))
     model.compile(optimizer=optimizers.Adam(lr = 0.0001),loss= losses.mean_squared_error ,metrics =[metrics.mse])
     return model
 
 model = build_model()
 
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.05, random_state=42)
 
-
-history = model.fit(x,y,epochs = 100,batch_size=16,validation_split=0.2)
+history = model.fit(X_train,y_train,epochs = 100,batch_size=16,validation_split=0.2)
 
 history_dict = history.history
 #print(history_dict)
@@ -89,58 +77,53 @@ save_model(model)"""
 
 from larch import Interpreter
 mylarch = Interpreter()
-
-
+from larch_plugins.xafs import feffdat
 import numpy as np
 
-k_value = (np.linspace(0,2000,401)*0.01).tolist()
-k_value = k_value[60:341]
-<<<<<<< HEAD
-chi = x[10000].tolist()
-=======
-chi = x[89].tolist()
->>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
+def prediction(chi):
+    k_value = (np.linspace(0,2000,401)*0.01).tolist()
+    k_value = k_value[60:341]
+    #chi = x[10000].tolist()
+    #chi.extend(chi_values) 
+    chi_y = np.asmatrix(chi)
+    k_value = np.asarray(k_value)
 
-#chi.extend(chi_values) 
-chi_y = np.asmatrix(chi)
-k_value = np.asarray(k_value)
+    actual_chi = np.asarray(chi)
 
-actual_chi = np.asarray(chi)
+    chi_y = np.asmatrix(chi)
 
-chi_y = np.asmatrix(chi)
+    #plt.plot(k_value,chi*k_value**2)
 
-#plt.plot(k_value,chi*k_value**2)
 
-from larch_plugins.xafs import feffdat
-from larch import Interpreter
 
-predict = model.predict(chi_y)
-<<<<<<< HEAD
-mylarch = Interpreter()
-front = '/Users/shail/EXAFS-Physics/Cu Data/path Data/feff'
-=======
+    predict = model.predict(chi_y)
+    mylarch = Interpreter()
 
-front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
->>>>>>> 70a1e8ac7470c1750df3635fe9b6b803161dc35b
-end = '.dat'
+    front = '/Users/user/EXAFS-Physics/Cu Data/path Data/feff'
+    end = '.dat'
 
-for i in range(1,2):
-    #print(i)
     predicted_chi = [0]*281
-    if i < 10:
-        filename = front+'000'+str(i)+end
-    elif i< 100:
-        filename = front+'00'+str(i)+end
-    else:
-        filename = front+'0'+str(i)+end
+    for i in range(1,11):
+        #print(i)
+        if i < 10:
+            filename = front+'000'+str(i)+end
+        elif i< 100:
+            filename = front+'00'+str(i)+end
+        else:
+            filename = front+'0'+str(i)+end
             
-    path=feffdat.feffpath(filename, s02=str(predict[0][4*(i-1)]) , e0= str(predict[0][4*(i-1) + 1]), sigma2= str(predict[0][4*(i-1) + 2]), deltar= str(predict[0][4*(i-1) +3]), _larch=mylarch)
-    feffdat._path2chi(path, _larch=mylarch)
+        path=feffdat.feffpath(filename, s02=str(predict[0][4*(i-1)]) , e0= str(predict[0][4*(i-1) + 1]), sigma2= str(predict[0][4*(i-1) + 2]), deltar= str(predict[0][4*(i-1) +3]), _larch=mylarch)
+        feffdat.path2chi(path, _larch=mylarch)
     
-    chi = path.chi
-    chi = chi[60:341]
-    predicted_chi += chi
+        chi = path.chi
+        chi = chi[60:341]
+        predicted_chi += chi
 
-plt.plot(k_value,actual_chi*k_value**2)
-plt.plot(k_value,predicted_chi*k_value**2)
-plt.show()
+    plt.plot(k_value,actual_chi*k_value**2)
+    plt.plot(k_value,predicted_chi*k_value**2)
+    plt.show()
+    
+    return predict
+  
+predict = prediction(X_test[100].tolist())
+loss_test = model.evaluate(X_test,y_test)
